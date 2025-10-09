@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>查詢系統</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="bg-light">
+  <div class="container-fluid mt-4">
+
+    <!-- 頁面標題和查詢條件顯示 -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <div class="row align-items-center">
+              <div class="col">
+                <h4 class="mb-0">
+                  <i class="bi bi-list-ul me-2"></i>報告清單
+                </h4>
+              </div>
+              <div class="col-auto">
+                <a th:href="@{searchForm}" class="btn btn-light btn-sm">
+                  <i class="bi bi-arrow-left me-1"></i>重新查詢
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="card-body bg-light">
+            <div class="row">
+              <div class="col-xl-6">
+                <strong>查詢條件：</strong>
+                <span th:if="${searchList.nationalId}" class="badge bg-info me-2">
+                                    身分證: <span th:text="${searchList.nationalId}"></span>
+                                </span>
+                <span th:if="${searchList.startDate}" class="badge bg-success me-2">
+                                    開始: <span th:text="${#temporals.format(searchList.startDate, 'yyyy-MM-dd')}"></span>
+                                </span>
+                <span th:if="${searchList.endDate}" class="badge bg-success me-2">
+                                    結束: <span th:text="${#temporals.format(searchList.endDate, 'yyyy-MM-dd')}"></span>
+                                </span>
+              </div>
+<!--              <div class="col-xl-6 text-xl-start">-->
+<!--                  <span class="text-muted">-->
+<!--                    共找到 <strong th:text="${searchCriteria.size()}"></strong> 筆資料-->
+<!--                  </span>-->
+<!--              </div>-->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 報告清單 -->
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body p-0">
+
+            <!-- 當沒有資料時 -->
+            <div th:if="${searchCriteria.isEmpty()}" class="text-center py-5">
+              <i class="bi bi-inbox display-1 text-muted"></i>
+              <h5 class="mt-3 text-muted">查無相關資料</h5>
+              <p class="text-muted">請調整查詢條件後重試</p>
+            </div>
+
+            <!-- 當有資料時 -->
+            <div th:unless="${searchCriteria.isEmpty()}">
+              <!-- 表格 (桌面版) -->
+              <div class="table-responsive d-none d-md-block">
+                <table class="table table-hover mb-0">
+                  <thead class="table-dark">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">身分證號碼</th>
+                    <th scope="col">報告類型</th>
+                    <th scope="col">建立日期</th>
+<!--                    <th scope="col">狀態</th>-->
+                    <th scope="col">操作</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr th:each="report, iterStat : ${searchCriteria}">
+                    <th scope="row" th:text="${iterStat.count}"></th>
+                    <td>
+                      <strong th:text="${report.patient.nationalId}"></strong>
+                    </td>
+<!--                    <td>-->
+<!--                      <span class="badge bg-secondary" th:text="${report.reportType}"></span>-->
+<!--                    </td>-->
+                    <td th:text="${report.reportDate}"></td>
+                    <td>
+                                                <span th:class="'badge ' +
+                                                    ${report.reportStatus == 'COMPLETED' ? 'bg-success' :
+                                                    (report.reportStatus == 'IN_PROGRESS' ? 'bg-warning' :
+                                                    (report.reportStatus == 'PENDING' ? 'bg-info' : 'bg-danger'))}"
+                                                      th:text="${report.reportStatus}"></span>
+                    </td>
+                    <td>
+                      <div class="btn-group btn-group-sm" role="group">
+                        <a class="btn btn-outline-success btn-sm"
+                           title="下載">
+                          <i class="bi bi-download"></i>
+                        </a>
+                        <button type="button"
+                                class="btn btn-outline-info btn-sm"
+                                data-bs-toggle="modal"
+                                th:data-bs-target="'#detailModal' + ${report.reportId}"
+                                title="詳細資訊">
+                          <i class="bi bi-info-circle"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+
+            <!-- 卡片版本 (手機版) -->
+              <div class="d-block d-md-none">
+                <div th:each="report : ${searchCriteria}" class="mb-3 mx-3">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                      <div>
+                        <h6 class="card-title" th:text="${report.reportId}"></h6>
+                        <p class="card-text text-muted mb-1">
+                          <small>身分證字號: <span th:text="${report.patient.nationalId}"></span></small>
+                        </p>
+                        <p class="card-text text-muted mb-2">
+                          <small th:text="${report.reportDate}"></small>
+                        </p>
+                      </div>
+                      <div class="text-end">
+                                  <span th:class="'badge ' +
+                                      ${report.reportStatus == 'COMPLETED' ? 'bg-success' :
+                                      (report.reportStatus == 'IN_PROGRESS' ? 'bg-warning' :
+                                      (report.reportStatus == 'PENDING' ? 'bg-info' : 'bg-danger'))}"
+                                      th:text="${report.reportStatus}"></span>
+                      </div>
+                    </div>
+                    <div class="mt-2">
+                      <span class="badge bg-secondary me-2" th:text="${report.reportType}"></span>
+                    </div>
+                    <div class="mt-3">
+                      <div class="btn-group btn-group-sm w-100" role="group">
+<!--                        <a th:href="@{/report/download/{id}(id=${report.id})}" class="btn btn-outline-success">下載</a>-->
+                        <a class="btn btn-outline-success">下載</a>
+                        <button type="button" class="btn btn-outline-info"
+                                data-bs-toggle="modal"
+                                th:data-bs-target="'#detailModal' + ${report.reportId}">詳細</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- 詳細資訊模態框 -->
+    <div th:each="report : ${searchCriteria}"
+         class="modal fade"
+         th:id="'detailModal' + ${report.reportId}"
+         tabindex="-1"
+         aria-labelledby="detailModalLabel"
+         aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="detailModalLabel">
+              <i class="bi bi-file-text me-2"></i>報告詳細資訊
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <dl class="row">
+              <dt class="col-sm-4">報告編號</dt>
+              <dd class="col-sm-8" th:text="'RPT-'+ ${report.reportId}"></dd>
+
+              <dt class="col-sm-4">身分證號碼</dt>
+              <dd class="col-sm-8" th:text="${report.patient.nationalId}"></dd>
+
+              <dt class="col-sm-4">姓名</dt>
+              <dd class="col-sm-8" th:text="${report.patient.firstName} + ${report.patient.lastName}"></dd>
+
+              <dt class="col-sm-4">生日</dt>
+              <dd class="col-sm-8" th:text="${report.patient.birthDate}"></dd>
+
+              <dt class="col-sm-4">報告類型</dt>
+              <dd class="col-sm-8" th:text="${report.reportType == 'MEDICAL' ? '醫療報告':
+               ( report.reportType == 'FINANCIAL'? '財務報告':
+               ( report.reportType == 'GENERAL' ? '一般報告': '稽核報告' ))}"></dd>
+
+              <dt class="col-sm-4">報告建立日期</dt>
+              <dd class="col-sm-8" th:text="${report.reportDate}"></dd>
+
+              <dt class="col-sm-4">狀態</dt>
+              <dd class="col-sm-8">
+                            <span th:class="'badge ' +
+                                ${report.reportStatus == 'COMPLETED' ? 'bg-success' :
+                                (report.reportStatus == 'IN_PROGRESS' ? 'bg-warning' :
+                                (report.reportStatus == 'PENDING' ? 'bg-info' : 'bg-danger'))}"
+                                  th:text="${report.reportStatus}"></span>
+              </dd>
+
+              <hr>
+              <h5 class="fs-5">血液檢測結果：</h5>
+              <dt class="col-sm-4">血色素</dt>
+              <dd class="col-sm-8" th:text="${report.bloodTest.hemoglobin}"></dd>
+              <dt class="col-sm-4">白血球素</dt>
+              <dd class="col-sm-8" th:text="${report.bloodTest.wbcCount}"></dd>
+
+              <hr>
+              <h5 class="fs-5">肝腎功能檢查結果：</h5>
+              <dt class="col-sm-4">血清丙胺酸轉胺酶 (ALT)</dt>
+              <dd class="col-sm-8" th:text="${report.liverKidney.alt}"></dd>
+              <dt class="col-sm-4">肌酸酐</dt>
+              <dd class="col-sm-8" th:text="${report.liverKidney.creatinine}"></dd>
+              <dt class="col-sm-4">總膽固醇</dt>
+              <dd class="col-sm-8" th:text="${report.liverKidney.cholesterolTotal}"></dd>
+              <dt class="col-sm-4">三酸甘油酯</dt>
+              <dd class="col-sm-8" th:text="${report.liverKidney.triglyceride}"></dd>
+              <dt class="col-sm-4">高密度脂蛋白膽固醇</dt>
+              <dd class="col-sm-8" th:text="${report.liverKidney.hdl}"></dd>
+              <dt class="col-sm-4">空腹血糖</dt>
+              <dd class="col-sm-8" th:text="${report.liverKidney.fastingGlucose}"></dd>
+
+              <hr>
+              <h5 class="fs-5">尿液檢查結果：</h5>
+              <dt class="col-sm-4">尿蛋白 (陰性/陽性/數值)</dt>
+              <dd class="col-sm-8" th:text="${report.urineTest.protein}"></dd>
+              <dt class="col-sm-4">尿潛血 (陰性/陽性/數值)</dt>
+              <dd class="col-sm-8" th:text="${report.urineTest.occultBlood}"></dd>
+
+              <hr>
+              <h5 class="fs-5">X光檢查結果：</h5>
+              <dd class="col-sm-8" th:text="${report.xray.xrayResult}"></dd>
+
+              <hr>
+              <dt class="col-sm-4">備註</dt>
+              <dd class="col-sm-8" th:text="${report.summary ?: '無特殊備註'}"></dd>
+            </dl>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
+</body>
+</html>

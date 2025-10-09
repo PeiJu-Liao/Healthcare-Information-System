@@ -1,0 +1,178 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>查詢系統</title>
+    <!-- Bootstrap 5 CSS -->
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="bi bi-search me-2"></i>個人健檢資料查詢系統
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/healthcare/search}" th:object="${reportSearchForm}" method="POST">
+
+                        <!-- 身分證號碼 -->
+                        <div class="mb-3">
+                            <label for="idNumber" class="form-label">
+                                <i class="bi bi-person-vcard me-1"></i>身分證號碼
+                            </label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="idNumber"
+                                   th:field="*{nationalId}"
+                                   placeholder="請輸入身分證號碼 (例: A123456789)"
+                                   maxlength="10">
+                            <div class="form-text">請輸入10位數身分證號碼</div>
+                            <!-- 錯誤訊息 -->
+                            <div th:if="${#fields.hasErrors('nationalId')}" class="invalid-feedback d-block">
+                                <span th:errors="*{nationalId}"></span>
+                            </div>
+                        </div>
+
+                        <!-- 查詢日期範圍 -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="startDate" class="form-label">
+                                    <i class="bi bi-calendar-event me-1"></i>開始日期
+                                </label>
+                                <input type="date"
+                                       class="form-control"
+                                       id="startDate"
+                                       th:field="*{startDate}">
+                                <div th:if="${#fields.hasErrors('startDate')}" class="invalid-feedback d-block">
+                                    <span th:errors="*{startDate}"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="endDate" class="form-label">
+                                    <i class="bi bi-calendar-event me-1"></i>結束日期
+                                </label>
+                                <input type="date"
+                                       class="form-control"
+                                       id="endDate"
+                                       th:field="*{endDate}">
+                                <div th:if="${#fields.hasErrors('endDate')}" class="invalid-feedback d-block">
+                                    <span th:errors="*{endDate}"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 額外建議欄位 -->
+                        <div class="mb-3">
+                            <label for="reportType" class="form-label">
+                                <i class="bi bi-file-text me-1"></i>報告類型
+                            </label>
+                            <select class="form-select" id="reportType" th:field="*{reportType}">
+                                <option value="">請選擇報告類型</option>
+                                <option value="MEDICAL">醫療報告</option>
+                                <option value="FINANCIAL">財務報告</option>
+                                <option value="GENERAL">一般報告</option>
+                                <option value="AUDIT">稽核報告</option>
+                            </select>
+                        </div>
+
+                        <!--   處理狀態  -->
+<!--                        <div class="mb-3">-->
+<!--                            <label for="status" class="form-label">-->
+<!--                                <i class="bi bi-flag me-1"></i>狀態-->
+<!--                            </label>-->
+<!--                            <select class="form-select" id="status" th:field="*{status}">-->
+<!--                                <option value="PENDING">待處理</option>-->
+<!--                                <option value="IN_PROGRESS">處理中</option>-->
+<!--                                <option value="COMPLETED">已完成</option>-->
+<!--                                <option value="CANCELLED">已取消</option>-->
+<!--                            </select>-->
+<!--                        </div>-->
+
+<!--                        <div class="mb-4">-->
+<!--                            <label for="keyword" class="form-label">-->
+<!--                                <i class="bi bi-search me-1"></i>關鍵字-->
+<!--                            </label>-->
+<!--                            <input type="text"-->
+<!--                                   class="form-control"-->
+<!--                                   id="keyword"-->
+<!--                                   th:field="*{keyword}"-->
+<!--                                   placeholder="輸入關鍵字進行模糊搜尋">-->
+<!--                        </div>-->
+
+                        <!-- 按鈕區 -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="reset" class="btn btn-outline-secondary me-md-2">
+                                <i class="bi bi-arrow-clockwise me-1"></i>重設
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-search me-1"></i>查詢
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 使用說明 -->
+            <div class="card mt-4 border-info">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>使用說明
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0 small">
+                        <li>身分證號碼為必填欄位，請輸入正確格式</li>
+                        <li>日期範圍可單獨或組合使用</li>
+                        <li>其他欄位均為選填，可依需求篩選</li>
+                        <li>點擊查詢後將導向報告清單頁面</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap 5 JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+<!-- 表單驗證腳本 -->
+<script>
+    // 身分證號碼格式驗證
+    document.getElementById('nationalId').addEventListener('input', function(e) {
+        const value = e.target.value.toUpperCase();
+        const pattern = /^[A-Z][0-9]{9}$/;
+
+        if (value && !pattern.test(value)) {
+            e.target.classList.add('is-invalid');
+        } else {
+            e.target.classList.remove('is-invalid');
+        }
+    });
+
+    // 日期範圍驗證
+    function validateDateRange() {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+
+        if (startDate && endDate && startDate > endDate) {
+            document.getElementById('endDate').classList.add('is-invalid');
+            return false;
+        } else {
+            document.getElementById('endDate').classList.remove('is-invalid');
+            return true;
+        }
+    }
+
+    document.getElementById('startDate').addEventListener('change', validateDateRange);
+    document.getElementById('endDate').addEventListener('change', validateDateRange);
+</script>
+</body>
+</html>
