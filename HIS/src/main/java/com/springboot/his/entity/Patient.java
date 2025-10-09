@@ -1,4 +1,4 @@
-package entity;
+package com.springboot.his.entity;
 
 import jakarta.persistence.*;
 
@@ -11,12 +11,25 @@ public class Patient {
     @Column(name="patient_id")
     private int patientId; // PK
 
+    @Column(name="national_id")
     private String nationalId; // 身分證字號
+
+    @Column(name="first_name")
     private String firstName; // 名
+
+    @Column(name="last_name")
     private String lastName; // 姓
+
+    @Column(name="email")
     private String email; // 信箱
+
+    @Column(name="birth_date")
     private String birthDate; // 生日
+
+    @Column(name="gender")
     private String gender; // 性別
+
+    @Column(name="created_at")
     private String createdAt; // 建立時間
 
     public Patient() {}
