@@ -1,13 +1,22 @@
 package com.springboot.his.dto;
 
+import com.springboot.his.validation.ValidDateRange;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import java.time.LocalDate;
 
 @Data
+@ValidDateRange
 public class ReportSearchForm {
+
+    @NotBlank(message="請輸入10位數身分證號碼")
     private String nationalId;   // 身分證
-    private LocalDate startDate; // 開始日期
-    private LocalDate endDate;   // 結束日期
+
+    @PastOrPresent(message="開始日期不可超過今天")
+    private LocalDate startDate; // 開始日期(非必填)
+
+    @PastOrPresent(message="結束日期不可超過今天")
+    private LocalDate endDate;   // 結束日期(非必填)
     private String reportType;   // 非必填
     private String status;       // 非必填
     private String keyword;      // 非必填
