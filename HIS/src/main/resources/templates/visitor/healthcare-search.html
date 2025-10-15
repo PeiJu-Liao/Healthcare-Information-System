@@ -34,7 +34,6 @@
                                    th:field="*{nationalId}"
                                    placeholder="請輸入身分證號碼 (例: A123456789)"
                                    maxlength="10">
-                            <div class="form-text">請輸入10位數身分證號碼</div>
                             <!-- 錯誤訊息 -->
                             <div th:if="${#fields.hasErrors('nationalId')}" class="invalid-feedback d-block">
                                 <span th:errors="*{nationalId}"></span>
