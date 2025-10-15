@@ -7,7 +7,7 @@
 前端使用 **Thymeleaf** 作為模板引擎，  
 後端透過 **Spring Data JPA** 操作 **MySQL** 資料庫。
 
-<img width="380" height="1280" alt="localhost_8080_healthcare_searchForm_continue(iPhone 14 Pro Max)" src="https://github.com/user-attachments/assets/068f57cd-d495-4fac-9d2e-66b44772a099" />
+https://github.com/user-attachments/assets/7d89bcd4-31f3-4ed4-9b93-cd7135fe65a1
 
 ---
 
