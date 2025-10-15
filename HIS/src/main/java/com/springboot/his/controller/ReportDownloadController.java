@@ -39,7 +39,7 @@ public class ReportDownloadController {
 
         // 防呆(就流程來講，有查詢結果才會顯示下載按鈕)
         if (searchResults == null || searchResults.isEmpty()) {
-            sessionStatus.isComplete(); // 清除session中名為searchResult的屬性
+            sessionStatus.setComplete(); // 清除session中名為searchResult的屬性
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("查詢結果不存在或已過期，請重新查詢。".getBytes());
         }
@@ -55,6 +55,7 @@ public class ReportDownloadController {
         Report report = searchResults.get(0);
 
         if (report == null) {
+            sessionStatus.setComplete(); // 清除session中名為searchResult的屬性
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("找不到指定的報告".getBytes());
         }

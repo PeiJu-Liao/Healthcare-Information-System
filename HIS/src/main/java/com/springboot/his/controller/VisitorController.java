@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -38,9 +39,10 @@ public class VisitorController {
     @PostMapping("/search")
     public String saveEmployee(@Valid @ModelAttribute("reportSearchForm") ReportSearchForm searchForm,
                                BindingResult theBindingResult,
-                               Model model
+                               Model model,
+                               SessionStatus sessionStatus
                                ) {
-
+        sessionStatus.setComplete();; // 清除session中名為searchResult的屬性
         if (theBindingResult.hasErrors()){
             theBindingResult.getAllErrors().forEach(error -> {
                 System.out.println("errors:" + error.getDefaultMessage());
