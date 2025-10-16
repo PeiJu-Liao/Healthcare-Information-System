@@ -42,7 +42,7 @@ public class VisitorController {
                                Model model,
                                SessionStatus sessionStatus
                                ) {
-        sessionStatus.setComplete();; // 清除session中名為searchResult的屬性
+//        sessionStatus.setComplete();; // 清除session中名為searchResult的屬性
         if (theBindingResult.hasErrors()){
             theBindingResult.getAllErrors().forEach(error -> {
                 System.out.println("errors:" + error.getDefaultMessage());
