@@ -9,6 +9,9 @@
 
 https://github.com/user-attachments/assets/7d89bcd4-31f3-4ed4-9b93-cd7135fe65a1
 
+PDF檔案下載範本：
+[RPT_2.pdf](https://github.com/user-attachments/files/22945562/RPT_2.pdf)
+
 ---
 
 ## 🧩 功能說明
