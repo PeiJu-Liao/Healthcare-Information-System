@@ -1,5 +1,6 @@
 package com.springboot.his.controller;
 
+import com.itextpdf.text.DocumentException;
 import com.springboot.his.entity.Report;
 import com.springboot.his.service.PDFGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class ReportDownloadController {
     // ResponseEntity是Spring Framework 用於封裝和回傳整個HTTP 響應的類別，讓開發者能靈活地控制HTTP 回應的狀態碼、Header 和Body。
     // <byte[]> 適合傳遞二進制的數據，例如圖片、PDF、或其他文件
     public ResponseEntity<byte[]> downloadReport(@RequestParam("reportId") Long reportId,
-                                                 @ModelAttribute("searchResult") List<Report> searchResults, SessionStatus sessionStatus) throws IOException {
+                                                 @ModelAttribute("searchResult") List<Report> searchResults, SessionStatus sessionStatus) throws IOException, DocumentException {
 
         System.out.println("SearchResults>>" + searchResults);
 
